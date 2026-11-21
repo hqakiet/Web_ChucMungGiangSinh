@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Giáng Sinh An Lành — Cây Thông Noel Lung Linh</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Be Vietnam Pro & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles for glassmorphism, smooth animations, and custom range sliders */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030917;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        #christmas-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            cursor: crosshair;
+        }
+
+        /* Glassmorphism panel aesthetic */
+        .glass-panel {
+            background: rgba(8, 18, 36, 0.52);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-pill {
+            background: rgba(15, 28, 52, 0.58);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        /* Wish fade & slide transition */
+        .wish-text-transition {
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .wish-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .wish-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Smooth UI hide/show for Fullscreen Viewing Mode */
+        .ui-layer {
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        .ui-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(14px);
+        }
+
+        /* Safe area & Mobile Bottom Sheet Drawer */
+        .pb-safe {
+            padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 768px) {
+            #control-dock {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100% !important;
+                max-height: 82vh;
+                overflow-y: auto;
+                z-index: 45;
+                padding: 1rem 1rem max(1.25rem, env(safe-area-inset-bottom));
+                background: rgba(6, 15, 32, 0.92);
+                backdrop-filter: blur(22px);
+                -webkit-backdrop-filter: blur(22px);
+                border-top: 1px solid rgba(255, 255, 255, 0.16);
+                border-radius: 1.5rem 1.5rem 0 0;
+                box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.72);
+                transform: translateY(105%);
+                transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+                pointer-events: auto;
+            }
+
+            #control-dock.drawer-open {
+                transform: translateY(0);
+            }
+
+            /* Comfortable touch targets on mobile */
+            .touch-target {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        /* Custom sleek volume slider */
+        input[type="range"].volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.18);
+            height: 4px;
+            border-radius: 999px;
+            outline: none;
+        }
+
+        input[type="range"].volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #fcd34d;
+            box-shadow: 0 0 10px rgba(252, 211, 77, 0.8);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        input[type="range"].volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Subtle shimmer on title */
+        .text-glow-gold {
+            text-shadow: 0 0 18px rgba(251, 191, 36, 0.45);
+        }
+
+        /* Custom scrollbar for mobile modals */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-amber-400/30 selection:text-amber-100">
+
+    <!-- Interactive Fullscreen 3D-Style Christmas Tree & Aurora Canvas -->
+    <canvas id="christmas-canvas" aria-label="Cây thông Noel 3D phát sáng tương tác"></canvas>
+
+    <!-- Subtle Toast Notification (replaces alert) -->
+    <div id="toast-box" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+        <div class="glass-panel px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-amber-200 flex items-center gap-2 border-amber-400/30">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="toast-message">Thông báo</span>
+        </div>
+    </div>
+
+    <!-- Browser Autoplay Unlock Prompt (Only shown when browser blocks unmuted autoplay) -->
+    <button id="autoplay-prompt" type="button"
+        class="hidden fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 z-40 glass-panel px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-amber-100 border border-amber-400/45 shadow-[0_0_24px_rgba(251,191,36,0.35)] flex items-center gap-2 hover:bg-amber-400/20 active:scale-95 transition-all cursor-pointer animate-bounce">
+        <span class="text-base leading-none">🔊</span>
+        <span>Chạm bất kỳ đâu để bật nhạc Giáng sinh</span>
+    </button>
+
+    <!-- Top Header Bar -->
+    <header class="fixed top-0 left-0 right-0 z-30 p-3 sm:p-5 flex items-center justify-between pointer-events-none">
+        <!-- Brand / Festive Title -->
+        <div id="header-brand" class="ui-layer pointer-events-auto flex items-center gap-3">
+            <div class="glass-pill px-3.5 py-2 rounded-2xl flex items-center gap-2.5">
+                <span class="text-lg sm:text-xl leading-none" aria-hidden="true">🎄</span>
+                <div>
+                    <h1 class="font-serif text-sm sm:text-base font-bold tracking-wide text-amber-100 text-glow-gold leading-tight">
+                        Giáng Sinh An Lành
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-slate-300/80 hidden sm:block">
+                        Chạm bắn pháo hoa • Kéo ngang để xoay cây thông ✨
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Top-Right Controls (Always accessible toggle button) -->
+        <div class="pointer-events-auto flex items-center gap-2">
+            <!-- Snow Toggle Button -->
+            <button id="btn-snow-toggle" type="button" title="Chuyển chế độ tuyết rơi"
+                class="ui-layer touch-target glass-pill hover:bg-white/15 active:scale-95 transition-all px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-sky-100 flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m0-18l-2.5 2.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12h18M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5m-13-6.5l13 13m0-13l-13 13"/>
+                </svg>
+                <span id="snow-label" class="hidden sm:inline">Tuyết: Vừa</span>
+            </button>
+
+            <!-- Hide / Show Panels Button (Always Visible) -->
+            <button id="btn-toggle-ui" type="button" title="Ẩn/Hiện bảng điều khiển"
+                class="touch-target glass-pill hover:bg-white/15 active:scale-95 transition-all px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-amber-100 flex items-center justify-center gap-1.5 border-amber-300/25">
+                <svg id="icon-eye-open" class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <svg id="icon-eye-closed" class="w-4 h-4 text-amber-300 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                </svg>
+                <span id="ui-toggle-text" class="hidden sm:inline">Thu gọn</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Backdrop -->
+    <div id="drawer-backdrop" class="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs hidden md:hidden transition-opacity duration-300 opacity-0"></div>
+
+    <!-- Main Floating Overlay Container -->
+    <main id="main-ui-overlay" class="fixed bottom-0 left-0 right-0 z-20 px-3 pt-2 pb-safe md:p-5 pointer-events-none flex flex-col md:flex-row md:items-end justify-between gap-2.5 sm:gap-4 max-w-[1600px] mx-auto">
+        
+        <!-- LEFT PANEL: Dynamic Christmas Wishes Card -->
+        <section id="wish-card" class="pointer-events-auto w-full md:w-[390px] lg:w-[440px] glass-panel rounded-2xl p-3.5 sm:p-5 transition-all duration-500">
+            <!-- Top Row: Badge + Countdown + Quick Actions -->
+            <div class="flex items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <span id="wish-tag" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide bg-amber-400/15 text-amber-300 border border-amber-400/25">
+                        ✨ An Lành
+                    </span>
+                    <span id="wish-counter" class="text-[11px] text-slate-400 font-medium">
+                        1 / 12
+                    </span>
+                </div>
+
+                <!-- Countdown & Quick Nav Controls -->
+                <div class="ui-layer flex items-center gap-1">
+                    <span id="wish-countdown" class="text-[11px] text-slate-300/80 tabular-nums mr-1">
+                        10s
+                    </span>
+                    <button id="btn-wish-prev" type="button" title="Lời chúc trước"
+                        class="p-2 md:p-1.5 rounded-lg hover:bg-white/10 active:scale-95 text-slate-300 hover:text-white transition-colors">
+                        <svg class="w-4 h-4 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button id="btn-wish-next" type="button" title="Lời chúc tiếp theo"
+                        class="p-2 md:p-1.5 rounded-lg hover:bg-white/10 active:scale-95 text-slate-300 hover:text-white transition-colors">
+                        <svg class="w-4 h-4 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Wish Content Body -->
+            <div class="min-h-[56px] sm:min-h-[76px] flex flex-col justify-center">
+                <p id="wish-text" class="wish-text-transition wish-visible font-serif italic text-[13px] sm:text-base md:text-[17px] leading-relaxed text-slate-100">
+                    "Chúc bạn một mùa Giáng sinh an lành, ấm áp bên gia đình và những người thương yêu. Mong mọi điều tốt đẹp nhất sẽ luôn gõ cửa nhà bạn!"
+                </p>
+                <p id="wish-author" class="wish-text-transition wish-visible text-right text-[11px] sm:text-xs text-amber-200/80 mt-1 font-medium">
+                    — Gửi trao yêu thương 🎄
+                </p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-2.5 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                <div id="wish-progress-bar" class="h-full bg-gradient-to-r from-amber-300 via-yellow-200 to-emerald-300 rounded-full transition-none" style="width: 0%;"></div>
+            </div>
+
+            <!-- Desktop Interval Selector Row (On mobile, moved cleanly into Settings Bottom Sheet) -->
+            <div class="ui-layer hidden md:flex mt-2.5 items-center justify-between gap-2 text-[11px] text-slate-300/80">
+                <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-amber-300/80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v5l3 2"/>
+                    </svg>
+                    Tự đổi sau:
+                </span>
+                <div class="flex items-center gap-1 interval-selector-group">
+                    <button data-interval="5" class="interval-btn px-2 py-0.5 rounded-md hover:bg-white/10 transition-colors">5s</button>
+                    <button data-interval="10" class="interval-btn px-2 py-0.5 rounded-md bg-amber-400/25 text-amber-200 font-semibold border border-amber-400/30">10s</button>
+                    <button data-interval="15" class="interval-btn px-2 py-0.5 rounded-md hover:bg-white/10 transition-colors">15s</button>
+                    <button data-interval="30" class="interval-btn px-2 py-0.5 rounded-md hover:bg-white/10 transition-colors">30s</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MOBILE COMPACT FLOATING MINI-BAR (Visible only on <= 768px) -->
+        <nav id="mobile-mini-bar" class="ui-layer md:hidden pointer-events-auto w-full glass-panel rounded-2xl p-2 flex items-center justify-between gap-2">
+            <!-- Play/Pause + Song Info -->
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+                <button id="btn-mobile-play" type="button" aria-label="Phát hoặc tạm dừng nhạc"
+                    class="touch-target w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_14px_rgba(251,191,36,0.4)]">
+                    <svg class="icon-play-sync w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg class="icon-pause-sync w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+                    </svg>
+                </button>
+                <div class="min-w-0 flex-1">
+                    <p id="mobile-track-title" class="text-xs font-semibold text-white truncate">We Wish You a Merry Christmas</p>
+                    <p id="mobile-mode-subtitle" class="text-[10px] text-amber-200/80 truncate">Đèn: Ấm áp cổ điển</p>
+                </div>
+            </div>
+
+            <!-- Quick Mobile Actions: Next Track, Quick Light Cycle, Open Settings Drawer -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button id="btn-mobile-next" type="button" aria-label="Bài nhạc tiếp theo"
+                    class="touch-target w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 active:scale-95 text-slate-100 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+                <button id="btn-mobile-light" type="button" aria-label="Đổi chế độ đèn nhanh"
+                    class="touch-target w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 active:scale-95 text-amber-200 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+                    </svg>
+                </button>
+                <button id="btn-open-drawer" type="button" aria-label="Mở bảng tùy chỉnh"
+                    class="touch-target px-3 h-11 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 active:scale-95 text-amber-100 border border-amber-400/35 text-xs font-semibold flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    <span>Tùy chỉnh</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- RIGHT PANEL (Desktop) / SLIDE-UP BOTTOM SHEET DRAWER (Mobile): Lighting + Music + Settings -->
+        <aside id="control-dock" class="ui-layer pointer-events-auto w-full md:w-[390px] lg:w-[425px] flex flex-col gap-3">
+            
+            <!-- Mobile Drawer Handle & Header -->
+            <div class="flex md:hidden items-center justify-between pb-1 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <h2 class="font-serif text-base font-bold text-amber-100">Cài đặt & Âm nhạc</h2>
+                </div>
+                <button id="btn-close-drawer" type="button" aria-label="Đóng bảng tùy chỉnh"
+                    class="touch-target w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-slate-200 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Lighting Modes Selector -->
+            <div class="glass-panel rounded-2xl p-3 sm:p-3.5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_#fcd34d]"></span>
+                        Chế độ ánh sáng đèn
+                    </span>
+                    <span id="light-mode-name" class="text-[11px] text-amber-200 font-medium">Ấm áp cổ điển</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5" id="light-modes-grid">
+                    <button data-mode="warm" title="Ấm áp cổ điển"
+                        class="light-mode-btn touch-target active-mode flex flex-col items-center justify-center py-2 px-1 rounded-xl border border-amber-400/50 bg-amber-400/15 transition-all hover:bg-white/15">
+                        <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-200 shadow-[0_0_8px_#f59e0b] mb-1"></span>
+                        <span class="text-[10px] text-slate-100 truncate w-full text-center">Ấm áp</span>
+                    </button>
+                    <button data-mode="festive" title="Rực rỡ lễ hội"
+                        class="light-mode-btn touch-target flex flex-col items-center justify-center py-2 px-1 rounded-xl border border-white/10 bg-white/5 transition-all hover:bg-white/15">
+                        <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-rose-500 via-amber-400 to-emerald-400 shadow-[0_0_8px_#f43f5e] mb-1"></span>
+                        <span class="text-[10px] text-slate-300 truncate w-full text-center">Lễ hội</span>
+                    </button>
+                    <button data-mode="icy" title="Xanh băng giá"
+                        class="light-mode-btn touch-target flex flex-col items-center justify-center py-2 px-1 rounded-xl border border-white/10 bg-white/5 transition-all hover:bg-white/15">
+                        <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-sky-400 to-indigo-200 shadow-[0_0_8px_#38bdf8] mb-1"></span>
+                        <span class="text-[10px] text-slate-300 truncate w-full text-center">Băng giá</span>
+                    </button>
+                    <button data-mode="neon" title="Cầu vồng Neon"
+                        class="light-mode-btn touch-target flex flex-col items-center justify-center py-2 px-1 rounded-xl border border-white/10 bg-white/5 transition-all hover:bg-white/15">
+                        <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-fuchsia-500 via-cyan-400 to-lime-300 shadow-[0_0_8px_#e879f9] mb-1"></span>
+                        <span class="text-[10px] text-slate-300 truncate w-full text-center">Neon</span>
+                    </button>
+                    <button data-mode="rhythm" title="Nhấp nháy theo nhịp"
+                        class="light-mode-btn touch-target flex flex-col items-center justify-center py-2 px-1 rounded-xl border border-white/10 bg-white/5 transition-all hover:bg-white/15">
+                        <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-yellow-300 via-pink-400 to-purple-500 shadow-[0_0_8px_#c084fc] mb-1"></span>
+                        <span class="text-[10px] text-slate-300 truncate w-full text-center">Theo nhịp</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Music Player Dock (Reads local MP3 files in the same folder) -->
+            <div id="music-player-card" class="glass-panel rounded-2xl p-3 sm:p-4 transition-colors">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <!-- Play/Pause Primary Button -->
+                        <button id="btn-music-play" type="button" title="Phát / Tạm dừng nhạc"
+                            class="touch-target w-11 h-11 md:w-10 md:h-10 shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_18px_rgba(251,191,36,0.45)] transition-all">
+                            <svg id="icon-play" class="icon-play-sync w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <svg id="icon-pause" class="icon-pause-sync w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+                            </svg>
+                        </button>
+
+                        <!-- Current Track Info -->
+                        <div class="min-w-0">
+                            <p id="track-title" class="text-xs sm:text-sm font-semibold text-white truncate">
+                                We Wish You a Merry Christmas
+                            </p>
+                            <p id="track-subtitle" class="text-[11px] text-slate-300/80 truncate">
+                                Nhấn Phát để nghe nhạc từ thư mục
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Mini Audio Visualizer Bars -->
+                    <canvas id="visualizer-canvas" width="76" height="26" class="shrink-0 rounded-md opacity-90"></canvas>
+                </div>
+
+                <!-- Track Progress Bar -->
+                <div class="mb-2.5 flex items-center gap-2 text-[10px] text-slate-400 tabular-nums">
+                    <span id="track-time-current">0:00</span>
+                    <div id="track-progress-bar" class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden cursor-pointer">
+                        <div id="track-progress-fill" class="h-full bg-gradient-to-r from-amber-400 to-emerald-300 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <span id="track-time-total">0:00</span>
+                </div>
+
+                <!-- Controls Row: Prev, Playlist Selector, Next -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-music-prev" type="button" title="Bài trước"
+                        class="touch-target p-2 md:p-1.5 rounded-xl bg-white/5 hover:bg-white/15 active:scale-95 text-slate-200 transition-colors shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                        </svg>
+                    </button>
+
+                    <select id="track-select" aria-label="Danh sách nhạc Giáng sinh trong thư mục"
+                        class="flex-1 min-w-0 h-11 md:h-9 bg-slate-900/75 border border-white/15 rounded-xl px-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-400/60 cursor-pointer">
+                    </select>
+
+                    <button id="btn-music-next" type="button" title="Bài tiếp theo"
+                        class="touch-target p-2 md:p-1.5 rounded-xl bg-white/5 hover:bg-white/15 active:scale-95 text-slate-200 transition-colors shrink-0 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Volume + Shuffle Toggle Row -->
+                <div class="mt-2.5 flex items-center justify-between gap-2">
+                    <!-- Volume Control -->
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <svg class="w-4 h-4 text-amber-200/80 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zm4.54 3.46a5 5 0 010 7.07m2.83-9.9a9 9 0 010 12.73"/>
+                        </svg>
+                        <input id="volume-slider" type="range" min="0" max="100" value="80" aria-label="Âm lượng"
+                            class="volume-slider w-full max-w-[125px]">
+                    </div>
+
+                    <!-- Shuffle Playback Mode Button -->
+                    <button id="btn-shuffle" type="button" title="Bật/Tắt phát ngẫu nhiên"
+                        class="touch-target px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 active:scale-95 text-slate-300 border border-white/10 text-[11px] font-medium flex items-center gap-1.5 transition-all shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                        </svg>
+                        <span id="shuffle-label">Tuần tự</span>
+                    </button>
+                </div>
+                <audio id="custom-audio-el" preload="auto" autoplay playsinline class="hidden"></audio>
+            </div>
+
+            <!-- Mobile-Only Extra Settings inside Bottom Sheet (Snow, Wish Interval) -->
+            <div class="md:hidden glass-panel rounded-2xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs text-slate-300 font-medium">Thời gian đổi lời chúc:</span>
+                    <div class="flex items-center gap-1.5 interval-selector-group">
+                        <button data-interval="5" class="interval-btn px-2.5 py-1.5 rounded-lg bg-white/5 text-xs">5s</button>
+                        <button data-interval="10" class="interval-btn px-2.5 py-1.5 rounded-lg bg-amber-400/25 text-amber-200 font-semibold border border-amber-400/30 text-xs">10s</button>
+                        <button data-interval="15" class="interval-btn px-2.5 py-1.5 rounded-lg bg-white/5 text-xs">15s</button>
+                        <button data-interval="30" class="interval-btn px-2.5 py-1.5 rounded-lg bg-white/5 text-xs">30s</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1">
+                    <button id="btn-mobile-snow" type="button"
+                        class="touch-target w-full px-3 py-2 rounded-xl bg-sky-400/15 text-sky-200 border border-sky-400/30 text-xs font-medium flex items-center justify-center gap-1.5">
+                        <span>❄️</span>
+                        <span id="mobile-snow-label">Tuyết: Vừa</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        /**
+         * ============================================================================
+         * 1. TOAST NOTIFICATION SYSTEM (Replaces native alert)
+         * ============================================================================
+         */
+        let toastTimer = null;
+        function showToast(message) {
+            const box = document.getElementById('toast-box');
+            const msgEl = document.getElementById('toast-message');
+            if (!box || !msgEl) return;
+
+            msgEl.textContent = message;
+            box.classList.remove('opacity-0', '-translate-y-2');
+            box.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                box.classList.remove('opacity-100', 'translate-y-0');
+                box.classList.add('opacity-0', '-translate-y-2');
+            }, 3000);
+        }
+
+        /**
+         * ============================================================================
+         * 2. DYNAMIC CHRISTMAS WISHES ENGINE (Auto-rotating + Custom Wishes)
+         * ============================================================================
+         */
+        const wishes = [
+            {
+                text: "Chúc bạn một mùa Giáng sinh an lành, ấm áp bên gia đình và những người thương yêu. Mong mọi điều tốt đẹp nhất sẽ luôn gõ cửa nhà bạn!",
+                author: "Gửi trao yêu thương 🎄",
+                tag: "✨ An Lành"
+            },
+            {
+                text: "Nguyện cầu ánh sáng lấp lánh của đêm Noel sẽ xua tan mọi muộn phiền, mang đến cho bạn thật nhiều sức khỏe, bình an và niềm vui trọn vẹn.",
+                author: "Đêm Đông Ấm Áp ❄️",
+                tag: "❄️ Ấm Áp"
+            },
+            {
+                text: "Merry Christmas! Chúc mọi ước mơ nhỏ bé lẫn lớn lao của bạn trong năm mới sắp tới đều sẽ nở hoa rực rỡ như ánh sao trên đỉnh cây thông.",
+                author: "Chúc Mừng Giáng Sinh 🌟",
+                tag: "🌟 Hy Vọng"
+            },
+            {
+                text: "Dù ngoài trời có se lạnh, mong trái tim bạn luôn được sưởi ấm bởi tiếng cười, tình thân và những cái ôm thật chặt trong đêm Giáng sinh này.",
+                author: "Hơi Ấm Mùa Lễ Hội 🕯️",
+                tag: "💖 Yêu Thương"
+            },
+            {
+                text: "Chúc bạn một mùa lễ hội tràn đầy phép màu, túi luôn rủng rỉnh, công việc hanh thông và mỗi ngày trôi qua đều là một món quà đáng nhớ!",
+                author: "Ông Già Noel Gửi Tặng 🎁",
+                tag: "🎁 Hạnh Phúc"
+            },
+            {
+                text: "Cảm ơn bạn đã luôn hiện diện và làm thế giới này trở nên dịu dàng hơn. Chúc bạn một Giáng sinh thật ngọt ngào, bình yên và ngập tràn hạnh phúc!",
+                author: "Từ Trái Tim 💝",
+                tag: "💖 Yêu Thương"
+            },
+            {
+                text: "Khi tiếng chuông ngân vang khắp phố phường, chúc mọi điều may mắn, tài lộc và bình an sẽ nhẹ nhàng đáp xuống mái ấm thân yêu của bạn.",
+                author: "Tiếng Chuông Ngân Vang 🔔",
+                tag: "✨ An Lành"
+            },
+            {
+                text: "Giáng sinh không chỉ là một ngày lễ, mà là khoảnh khắc ta chậm lại để trân trọng những người bên cạnh. Chúc bạn một mùa Noel thật đáng nhớ!",
+                author: "Khoảnh Khắc Diệu Kỳ ✨",
+                tag: "❄️ Ấm Áp"
+            },
+            {
+                text: "Mong rằng từng bông tuyết rơi đêm nay sẽ mang theo hàng ngàn lời chúc tốt lành, giúp bạn luôn giữ vững nụ cười rạng rỡ trên môi.",
+                author: "Mùa Đông Diệu Kỳ ⛄",
+                tag: "🎁 Hạnh Phúc"
+            },
+            {
+                text: "Chúc gia đình bạn luôn hòa thuận, sum vầy bên bàn tiệc ấm cúng và cùng nhau viết nên những kỷ niệm Giáng sinh đẹp nhất của năm nay.",
+                author: "Sum Vầy Hạnh Phúc 🏡",
+                tag: "💖 Yêu Thương"
+            },
+            {
+                text: "Hãy để giai điệu Giáng sinh ngân vang và thắp sáng niềm tin trong bạn. Chúc bạn luôn mạnh mẽ, tỏa sáng và gặt hái thật nhiều thành công!",
+                author: "Ánh Sao Hy Vọng ⭐",
+                tag: "🌟 Hy Vọng"
+            },
+            {
+                text: "Gửi đến bạn ngàn lời chúc bình an nhân dịp Giáng sinh. Mong rằng niềm vui hôm nay sẽ còn đọng mãi suốt cả năm mới đang đến rất gần!",
+                author: "An Lành & Thịnh Vượng 🥂",
+                tag: "✨ An Lành"
+            }
+        ];
+
+        let currentWishIndex = 0;
+        let wishIntervalSec = 10;
+        let wishElapsedMs = 0;
+        let lastWishTick = performance.now();
+        let isWishPaused = false;
+
+        function renderWish(index, animateTransition = true) {
+            const safeIdx = (index + wishes.length) % wishes.length;
+            currentWishIndex = safeIdx;
+            const wish = wishes[safeIdx];
+
+            const textEl = document.getElementById('wish-text');
+            const authorEl = document.getElementById('wish-author');
+            const tagEl = document.getElementById('wish-tag');
+            const counterEl = document.getElementById('wish-counter');
+
+            const applyContent = () => {
+                textEl.textContent = `"${wish.text}"`;
+                authorEl.textContent = `— ${wish.author}`;
+                tagEl.textContent = wish.tag;
+                counterEl.textContent = `${safeIdx + 1} / ${wishes.length}`;
+            };
+
+            if (!animateTransition) {
+                applyContent();
+            } else {
+                textEl.classList.remove('wish-visible');
+                textEl.classList.add('wish-hidden');
+                authorEl.classList.remove('wish-visible');
+                authorEl.classList.add('wish-hidden');
+
+                setTimeout(() => {
+                    applyContent();
+                    textEl.classList.remove('wish-hidden');
+                    textEl.classList.add('wish-visible');
+                    authorEl.classList.remove('wish-hidden');
+                    authorEl.classList.add('wish-visible');
+                }, 260);
+            }
+
+            wishElapsedMs = 0;
+            lastWishTick = performance.now();
+        }
+
+        function updateWishTimer(now) {
+            if (isWishPaused) {
+                lastWishTick = now;
+                return;
+            }
+            const dt = Math.min(100, Math.max(0, now - lastWishTick));
+            lastWishTick = now;
+            wishElapsedMs += dt;
+
+            const totalMs = wishIntervalSec * 1000;
+            const ratio = Math.min(1, wishElapsedMs / totalMs);
+            const remainSec = Math.max(1, Math.ceil((totalMs - wishElapsedMs) / 1000));
+
+            const barEl = document.getElementById('wish-progress-bar');
+            const cdEl = document.getElementById('wish-countdown');
+            if (barEl) barEl.style.width = `${(ratio * 100).toFixed(1)}%`;
+            if (cdEl) cdEl.textContent = `${remainSec}s`;
+
+            if (wishElapsedMs >= totalMs) {
+                renderWish(currentWishIndex + 1, true);
+            }
+        }
+
+        // Bind Wish Navigation & Interval Selector Controls
+        document.getElementById('btn-wish-prev').addEventListener('click', () => renderWish(currentWishIndex - 1, true));
+        document.getElementById('btn-wish-next').addEventListener('click', () => renderWish(currentWishIndex + 1, true));
+
+        function setWishInterval(sec) {
+            wishIntervalSec = sec;
+            wishElapsedMs = 0;
+            lastWishTick = performance.now();
+
+            document.querySelectorAll('.interval-btn').forEach(btn => {
+                const isActive = parseInt(btn.dataset.interval, 10) === sec;
+                btn.classList.toggle('bg-amber-400/25', isActive);
+                btn.classList.toggle('text-amber-200', isActive);
+                btn.classList.toggle('font-semibold', isActive);
+                btn.classList.toggle('border', isActive);
+                btn.classList.toggle('border-amber-400/30', isActive);
+            });
+            showToast(`Lời chúc sẽ tự đổi sau mỗi ${sec} giây ⏱️`);
+        }
+
+        document.querySelectorAll('.interval-btn').forEach(btn => {
+            btn.addEventListener('click', () => setWishInterval(parseInt(btn.dataset.interval, 10)));
+        });
+
+        /**
+         * ============================================================================
+         * 3. SAME-FOLDER MP3 PLAYLIST PLAYER & REAL-TIME BEAT ANALYSER
+         * ============================================================================
+         * Đặt các file .mp3 vào CÙNG THƯ MỤC với file christmas_tree.html này
+         * và đặt tên khớp với trường "file" bên dưới (hoặc sửa lại tên file cho khớp).
+         */
+        const LOCAL_PLAYLIST = [
+            { title: "We Wish You a Merry Christmas", file: "wewishyouamerrychristmas.mp3" },
+            { title: "Jingle Bells", file: "jinglebells.mp3" },
+            { title: "Last Christmas", file: "lastchristmas.mp3" },
+            { title: "Feliz Navidad", file: "feliznavidad.mp3" }
+        ];
+
+        function formatTrackTime(sec) {
+            if (!sec || !isFinite(sec) || sec < 0) return "0:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        class FolderMP3MusicEngine {
+            constructor(tracks) {
+                this.playlist = tracks;
+                this.currentTrackIndex = 0;
+                this.isPlaying = false;
+                this.isShuffle = false;
+                this.volume = 0.80;
+                this.musicPulse = 0;
+                this.waitingForGesture = false;
+
+                // HTML5 Audio + Web Audio API Analyser (auto-bypassed on file:// to avoid browser CORS mute)
+                this.audioEl = document.getElementById('custom-audio-el');
+                this.audioEl.volume = this.volume;
+                this.isFileProtocol = window.location.protocol === 'file:';
+                this.ctx = null;
+                this.analyser = null;
+                this.freqData = null;
+                this.mediaSource = null;
+
+                // Auto-advance to the next MP3 when current song finishes
+                this.audioEl.addEventListener('ended', () => {
+                    this.nextTrack();
+                });
+
+                this.audioEl.addEventListener('loadedmetadata', () => {
+                    this.updateProgressUI();
+                });
+
+                this.audioEl.addEventListener('error', () => {
+                    const current = this.playlist[this.currentTrackIndex];
+                    const fileName = current ? current.file : '';
+                    showToast(`Không tìm thấy file "${fileName}" cùng thư mục! 📂`);
+                    this.isPlaying = false;
+                    this.updateUI();
+                });
+
+                this.renderPlaylistSelect();
+                this.loadTrackSource(0);
+                this.updateUI();
+            }
+
+            initAudioContext() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume().catch(() => {});
+                }
+                // Only attach Web Audio MediaElementSource when AudioContext is running over HTTP/HTTPS
+                if (!this.isFileProtocol && !this.mediaSource && this.ctx.state === 'running') {
+                    try {
+                        this.analyser = this.ctx.createAnalyser();
+                        this.analyser.fftSize = 64;
+                        this.analyser.smoothingTimeConstant = 0.78;
+                        this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
+                        this.mediaSource = this.ctx.createMediaElementSource(this.audioEl);
+                        this.mediaSource.connect(this.analyser);
+                        this.analyser.connect(this.ctx.destination);
+                    } catch (err) {
+                        this.analyser = null;
+                    }
+                }
+            }
+
+            // Subtle sparkle chime on firework tap
+            playSparkleChime() {
+                if (!this.ctx || this.ctx.state !== 'running') return;
+                const now = this.ctx.currentTime;
+                const chimes = [1046.5, 1318.51, 1567.98, 1760.0];
+                const freq = chimes[Math.floor(Math.random() * chimes.length)];
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.linearRampToValueAtTime(0.05 * this.volume, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.0004, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.28);
+            }
+
+            renderPlaylistSelect() {
+                const selectEl = document.getElementById('track-select');
+                selectEl.innerHTML = '';
+                this.playlist.forEach((track, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = String(idx);
+                    opt.textContent = `${idx + 1}. ${track.title}`;
+                    selectEl.appendChild(opt);
+                });
+                selectEl.value = String(this.currentTrackIndex);
+            }
+
+            loadTrackSource(index) {
+                const safeIdx = (index + this.playlist.length) % this.playlist.length;
+                this.currentTrackIndex = safeIdx;
+                const track = this.playlist[safeIdx];
+                // Encode filename safely for spaces/commas while keeping relative path in same folder
+                this.audioEl.src = encodeURI(`./${track.file}`);
+                this.audioEl.currentTime = 0;
+                this.audioEl.volume = this.volume;
+                this.audioEl.load();
+            }
+
+            selectTrack(index, autoPlay = true) {
+                this.loadTrackSource(index);
+                if (autoPlay) {
+                    this.play(false);
+                } else {
+                    this.isPlaying = false;
+                    this.updateUI();
+                }
+            }
+
+            nextTrack() {
+                if (this.isShuffle && this.playlist.length > 1) {
+                    let nextIdx = this.currentTrackIndex;
+                    while (nextIdx === this.currentTrackIndex) {
+                        nextIdx = Math.floor(Math.random() * this.playlist.length);
+                    }
+                    this.selectTrack(nextIdx, true);
+                } else {
+                    this.selectTrack(this.currentTrackIndex + 1, true);
+                }
+            }
+
+            prevTrack() {
+                this.selectTrack(this.currentTrackIndex - 1, true);
+            }
+
+            toggleShuffle() {
+                this.isShuffle = !this.isShuffle;
+                const btn = document.getElementById('btn-shuffle');
+                const label = document.getElementById('shuffle-label');
+                btn.classList.toggle('bg-amber-400/20', this.isShuffle);
+                btn.classList.toggle('text-amber-200', this.isShuffle);
+                btn.classList.toggle('border-amber-400/35', this.isShuffle);
+                btn.classList.toggle('bg-white/5', !this.isShuffle);
+                btn.classList.toggle('text-slate-300', !this.isShuffle);
+                btn.classList.toggle('border-white/10', !this.isShuffle);
+                label.textContent = this.isShuffle ? 'Ngẫu nhiên' : 'Tuần tự';
+                showToast(this.isShuffle ? 'Đã bật phát ngẫu nhiên 🔀' : 'Đã chuyển sang phát tuần tự 🔁');
+            }
+
+            setAutoPlayPromptVisible(visible) {
+                const promptEl = document.getElementById('autoplay-prompt');
+                if (promptEl) {
+                    promptEl.classList.toggle('hidden', !visible);
+                }
+            }
+
+            play(isAutoStart = false) {
+                if (!isAutoStart) {
+                    this.initAudioContext();
+                }
+                if (!this.audioEl.getAttribute('src')) {
+                    this.loadTrackSource(this.currentTrackIndex);
+                }
+                this.audioEl.muted = false;
+                this.audioEl.volume = this.volume;
+
+                const playPromise = this.audioEl.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise.then(() => {
+                        this.isPlaying = true;
+                        this.clearAutoPlayUnlock();
+                        if (!isAutoStart) this.initAudioContext();
+                        this.updateUI();
+                    }).catch((err) => {
+                        this.isPlaying = false;
+                        if (err && err.name === 'NotAllowedError') {
+                            // Browser blocked unmuted autoplay: show prompt & unlock on first valid gesture
+                            this.armAutoPlayUnlock();
+                        } else if (!isAutoStart) {
+                            const current = this.playlist[this.currentTrackIndex];
+                            showToast(`Kiểm tra file "${current.file}" đã đặt cùng thư mục chưa nhé! 📂`);
+                        }
+                        this.updateUI();
+                    });
+                }
+            }
+
+            armAutoPlayUnlock() {
+                this.setAutoPlayPromptVisible(true);
+                if (this.waitingForGesture) return;
+                this.waitingForGesture = true;
+
+                this._unlockHandler = (e) => {
+                    if (!this.waitingForGesture) return;
+                    // If user clicked the Play/Pause button directly, let the button handler toggle it
+                    if (e && e.target && e.target.closest && e.target.closest('#btn-music-play, #btn-mobile-play')) {
+                        this.clearAutoPlayUnlock();
+                        return;
+                    }
+                    if (!this.isPlaying) {
+                        this.play(false);
+                    }
+                };
+
+                ['click', 'touchstart', 'touchend', 'keydown'].forEach(evt => {
+                    window.addEventListener(evt, this._unlockHandler, true);
+                });
+            }
+
+            clearAutoPlayUnlock() {
+                this.waitingForGesture = false;
+                this.setAutoPlayPromptVisible(false);
+                if (this._unlockHandler) {
+                    ['click', 'touchstart', 'touchend', 'keydown'].forEach(evt => {
+                        window.removeEventListener(evt, this._unlockHandler, true);
+                    });
+                    this._unlockHandler = null;
+                }
+            }
+
+            pause() {
+                this.isPlaying = false;
+                this.clearAutoPlayUnlock();
+                if (!this.audioEl.paused) {
+                    this.audioEl.pause();
+                }
+                this.updateUI();
+            }
+
+            toggle() {
+                if (this.isPlaying) this.pause();
+                else this.play();
+            }
+
+            setVolume(val) {
+                this.volume = Math.max(0, Math.min(1, val));
+                this.audioEl.volume = this.volume;
+            }
+
+            seekToFraction(frac) {
+                const clamped = Math.max(0, Math.min(1, frac));
+                if (this.audioEl.duration && isFinite(this.audioEl.duration)) {
+                    this.audioEl.currentTime = clamped * this.audioEl.duration;
+                    this.updateProgressUI();
+                }
+            }
+
+            updateProgressUI() {
+                const fillEl = document.getElementById('track-progress-fill');
+                const curEl = document.getElementById('track-time-current');
+                const totEl = document.getElementById('track-time-total');
+
+                const cur = this.audioEl.currentTime || 0;
+                const dur = isFinite(this.audioEl.duration) ? this.audioEl.duration : 0;
+
+                curEl.textContent = formatTrackTime(cur);
+                totEl.textContent = formatTrackTime(dur);
+                fillEl.style.width = dur > 0 ? `${Math.min(100, (cur / dur) * 100)}%` : '0%';
+            }
+
+            updateUI() {
+                const track = this.playlist[this.currentTrackIndex];
+                const title = track ? track.title : 'Nhạc Giáng Sinh';
+                const sub = this.isPlaying
+                    ? `Đang phát • Bài ${this.currentTrackIndex + 1} / ${this.playlist.length}`
+                    : `Sẵn sàng • Bài ${this.currentTrackIndex + 1} / ${this.playlist.length}`;
+
+                document.getElementById('track-title').textContent = title;
+                document.getElementById('track-subtitle').textContent = sub;
+                document.getElementById('mobile-track-title').textContent = title;
+                document.getElementById('track-select').value = String(this.currentTrackIndex);
+
+                document.querySelectorAll('.icon-play-sync').forEach(el => {
+                    el.classList.toggle('hidden', this.isPlaying);
+                });
+                document.querySelectorAll('.icon-pause-sync').forEach(el => {
+                    el.classList.toggle('hidden', !this.isPlaying);
+                });
+            }
+
+            getVisualizerData(time) {
+                if (this.analyser && this.isPlaying) {
+                    this.analyser.getByteFrequencyData(this.freqData);
+                    // Real-time bass + lower-mid energy for beat-reactive tree lights
+                    let energy = 0;
+                    for (let i = 1; i < 10; i++) energy += this.freqData[i];
+                    const avg = energy / (9 * 255);
+                    this.musicPulse = Math.max(this.musicPulse * 0.86, Math.min(1, avg * 1.9));
+                    return this.freqData;
+                }
+                if (this.isPlaying) {
+                    // Smooth animated pulse fallback when running directly via file://
+                    const pulse = (Math.sin(time * 0.0085) * 0.5 + 0.5) * 0.72 + 0.18;
+                    this.musicPulse = Math.max(this.musicPulse * 0.88, pulse);
+                }
+                return null;
+            }
+        }
+
+        const musicEngine = new FolderMP3MusicEngine(LOCAL_PLAYLIST);
+
+        // Bind Music UI Events (Play/Pause, Prev/Next, Seek, Volume, Shuffle)
+        document.getElementById('btn-music-play').addEventListener('click', () => musicEngine.toggle());
+        document.getElementById('btn-mobile-play').addEventListener('click', () => musicEngine.toggle());
+        document.getElementById('btn-music-next').addEventListener('click', () => musicEngine.nextTrack());
+        document.getElementById('btn-mobile-next').addEventListener('click', () => musicEngine.nextTrack());
+        document.getElementById('btn-music-prev').addEventListener('click', () => musicEngine.prevTrack());
+        document.getElementById('btn-shuffle').addEventListener('click', () => musicEngine.toggleShuffle());
+
+        document.getElementById('track-progress-bar').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            musicEngine.seekToFraction((e.clientX - rect.left) / rect.width);
+        });
+
+        document.getElementById('track-select').addEventListener('change', (e) => {
+            if (e.target.value !== '') {
+                musicEngine.selectTrack(parseInt(e.target.value, 10), true);
+            }
+        });
+
+        document.getElementById('volume-slider').addEventListener('input', (e) => {
+            musicEngine.setVolume(parseInt(e.target.value, 10) / 100);
+        });
+
+        // Mini Visualizer Canvas Renderer + Track Progress Ticker
+        const visCanvas = document.getElementById('visualizer-canvas');
+        const visCtx = visCanvas.getContext('2d');
+        let lastProgressSync = 0;
+        function drawVisualizer(time) {
+            if (time - lastProgressSync > 250) {
+                lastProgressSync = time;
+                musicEngine.updateProgressUI();
+            }
+
+            const w = visCanvas.width;
+            const h = visCanvas.height;
+            visCtx.clearRect(0, 0, w, h);
+
+            const bars = 12;
+            const gap = 2;
+            const barW = (w - gap * (bars - 1)) / bars;
+            const data = musicEngine.getVisualizerData(time);
+
+            for (let i = 0; i < bars; i++) {
+                let norm = 0.14;
+                if (musicEngine.isPlaying && data) {
+                    const binVal = data[Math.min(i * 2 + 1, data.length - 1)] / 255;
+                    norm = Math.max(0.16, Math.min(1, binVal * 1.45));
+                } else if (musicEngine.isPlaying) {
+                    const waveA = Math.sin(time * 0.008 + i * 0.7) * 0.5 + 0.5;
+                    const waveB = Math.cos(time * 0.013 - i * 0.5) * 0.5 + 0.5;
+                    norm = 0.22 + (waveA * 0.55 + waveB * 0.45) * 0.68;
+                } else {
+                    norm = 0.14 + (Math.sin(time * 0.003 + i * 0.5) * 0.5 + 0.5) * 0.10;
+                }
+
+                const barH = Math.max(3, norm * (h - 2));
+                const x = i * (barW + gap);
+                const y = h - barH;
+
+                const grad = visCtx.createLinearGradient(0, h, 0, 0);
+                grad.addColorStop(0, '#f59e0b');
+                grad.addColorStop(0.6, '#fcd34d');
+                grad.addColorStop(1, '#a7f3d0');
+                visCtx.fillStyle = grad;
+
+                visCtx.beginPath();
+                visCtx.roundRect(x, y, barW, barH, 2);
+                visCtx.fill();
+            }
+        }
+
+
+        /**
+         * ============================================================================
+         * 4. 3D-STYLE GLOWING CHRISTMAS TREE, AURORA, SNOW & FIREWORKS CANVAS
+         * ============================================================================
+         */
+        const canvas = document.getElementById('christmas-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        // Lighting Modes Configuration
+        const LIGHT_MODES = {
+            warm: {
+                name: "Ấm áp cổ điển",
+                colors: ['#fffbeb', '#fde68a', '#fbbf24', '#f59e0b', '#fb923c'],
+                ribbonA: '#fde68a',
+                ribbonB: '#f59e0b',
+                starColor: '#fef08a',
+                aurora: ['rgba(16, 185, 129, 0.13)', 'rgba(245, 158, 11, 0.08)']
+            },
+            festive: {
+                name: "Rực rỡ lễ hội",
+                colors: ['#fb7185', '#ef4444', '#fbbf24', '#34d399', '#fef08a'],
+                ribbonA: '#fcd34d',
+                ribbonB: '#fb7185',
+                starColor: '#fde047',
+                aurora: ['rgba(16, 185, 129, 0.15)', 'rgba(244, 63, 94, 0.09)']
+            },
+            icy: {
+                name: "Xanh băng giá",
+                colors: ['#f0f9ff', '#bae6fd', '#38bdf8', '#818cf8', '#e0f2fe'],
+                ribbonA: '#e0f2fe',
+                ribbonB: '#38bdf8',
+                starColor: '#e0f2fe',
+                aurora: ['rgba(56, 189, 248, 0.16)', 'rgba(129, 140, 248, 0.11)']
+            },
+            neon: {
+                name: "Cầu vồng Neon",
+                colors: ['#f472b6', '#c084fc', '#22d3ee', '#4ade80', '#facc15'],
+                ribbonA: '#22d3ee',
+                ribbonB: '#e879f9',
+                starColor: '#f5d0fe',
+                aurora: ['rgba(192, 132, 252, 0.14)', 'rgba(34, 211, 238, 0.14)']
+            },
+            rhythm: {
+                name: "Nhấp nháy theo nhịp",
+                colors: ['#fde047', '#f472b6', '#38bdf8', '#34d399', '#fb923c'],
+                ribbonA: '#fde047',
+                ribbonB: '#c084fc',
+                starColor: '#fef08a',
+                aurora: ['rgba(168, 85, 247, 0.15)', 'rgba(52, 211, 153, 0.13)']
+            }
+        };
+
+        let currentLightMode = 'warm';
+        let snowLevel = 1; // 0 = Tắt, 1 = Vừa, 2 = Dày
+        const SNOW_LABELS = ['Tuyết: Tắt', 'Tuyết: Vừa', 'Tuyết: Dày'];
+        // Interactive rotation & touch-drag inertia state (gentle auto-spin + boost on horizontal drag)
+        const BASE_SPIN_SPEED = 0.0045;
+        let treeAngle = 0;
+        let treeAngularVelocity = BASE_SPIN_SPEED;
+        let isDraggingTree = false;
+        let pointerDownX = 0;
+        let pointerDownY = 0;
+        let lastDragX = 0;
+        let hasDraggedBeyondTap = false;
+
+        // Scene entity arrays
+        const foliageParticles = [];
+        const ornamentLights = [];
+        const ribbonParticles = [];
+        const starsBg = [];
+        const snowflakes = [];
+        const fireworks = [];
+
+        function initSceneEntities() {
+            foliageParticles.length = 0;
+            ornamentLights.length = 0;
+            ribbonParticles.length = 0;
+            starsBg.length = 0;
+            snowflakes.length = 0;
+
+            // Adapt particle density smoothly for 60fps on mobile phones
+            const isSmallMobile = width <= 768;
+
+            // 1. Background Twinkling Stars
+            const starCount = isSmallMobile ? 75 : 120;
+            for (let i = 0; i < starCount; i++) {
+                starsBg.push({
+                    x: Math.random(),
+                    y: Math.random() * 0.72,
+                    r: Math.random() * 1.5 + 0.4,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.002 + 0.0008
+                });
+            }
+
+            // 2. 3D Pine Foliage Particles (Tiered conical layers)
+            const foliageCount = isSmallMobile ? 520 : 880;
+            for (let i = 0; i < foliageCount; i++) {
+                const t = Math.pow(Math.random(), 0.78);
+                const tierWave = 1 + 0.14 * Math.sin(t * Math.PI * 11);
+                const maxR = t * tierWave;
+                const r = maxR * (0.35 + 0.65 * Math.sqrt(Math.random()));
+                const theta = Math.random() * Math.PI * 2;
+
+                const greenShade = Math.random();
+                let color = '#10b981';
+                if (greenShade < 0.35) color = '#059669';
+                else if (greenShade < 0.7) color = '#10b981';
+                else if (greenShade < 0.9) color = '#34d399';
+                else color = '#047857';
+
+                foliageParticles.push({
+                    t, r, theta,
+                    size: Math.random() * 2.1 + 1.0,
+                    color,
+                    alpha: Math.random() * 0.45 + 0.35
+                });
+            }
+
+            // 3. Dual Spiral Glowing Ribbons
+            const ribbonCount = isSmallMobile ? 185 : 260;
+            for (let i = 0; i < ribbonCount; i++) {
+                const t = i / ribbonCount;
+                const turns = 5.5;
+                const thetaA = t * Math.PI * 2 * turns;
+                const thetaB = thetaA + Math.PI;
+                const r = t * 1.04 + 0.015;
+
+                ribbonParticles.push({ t, r, theta: thetaA, strand: 0, phase: i * 0.12 });
+                if (i % 2 === 0) {
+                    ribbonParticles.push({ t, r: r * 0.98, theta: thetaB, strand: 1, phase: i * 0.15 + 1.5 });
+                }
+            }
+
+            // 4. Twinkling Modern Lights & Ornaments
+            const lightCount = isSmallMobile ? 95 : 135;
+            for (let i = 0; i < lightCount; i++) {
+                const t = 0.06 + Math.pow(Math.random(), 0.75) * 0.93;
+                const tierWave = 1 + 0.13 * Math.sin(t * Math.PI * 11);
+                const r = t * tierWave * (0.86 + Math.random() * 0.16);
+                const theta = Math.random() * Math.PI * 2;
+
+                ornamentLights.push({
+                    t, r, theta,
+                    colorIdx: Math.floor(Math.random() * 5),
+                    baseSize: Math.random() * 2.6 + 2.2,
+                    phase: Math.random() * Math.PI * 2,
+                    twinkleSpeed: Math.random() * 0.0045 + 0.002
+                });
+            }
+
+            // 5. Multi-depth Snowflakes
+            const snowTotal = isSmallMobile ? 120 : 190;
+            for (let i = 0; i < snowTotal; i++) {
+                const depth = Math.random();
+                snowflakes.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    depth,
+                    radius: 0.9 + depth * 2.8,
+                    speedY: 0.45 + depth * 1.45,
+                    drift: (Math.random() - 0.5) * 0.6,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        // Spawn interactive firework / star burst on click or tap
+        function spawnFirework(x, y) {
+            const palette = LIGHT_MODES[currentLightMode].colors;
+            const count = 28;
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.35;
+                const speed = Math.random() * 3.8 + 1.4;
+                fireworks.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 0.6,
+                    life: 1,
+                    decay: Math.random() * 0.018 + 0.014,
+                    size: Math.random() * 2.4 + 1.2,
+                    color: palette[Math.floor(Math.random() * palette.length)]
+                });
+            }
+            musicEngine.playSparkleChime();
+        }
+
+        // Draw Northern Lights (Aurora Borealis) behind the tree
+        function drawAurora(time) {
+            const mode = LIGHT_MODES[currentLightMode];
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen';
+
+            for (let band = 0; band < 2; band++) {
+                const grad = ctx.createLinearGradient(0, 0, width, height * 0.55);
+                grad.addColorStop(0, 'rgba(0,0,0,0)');
+                grad.addColorStop(0.35, mode.aurora[band]);
+                grad.addColorStop(0.65, mode.aurora[1 - band]);
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                const baseY = height * (0.18 + band * 0.11);
+                ctx.moveTo(0, baseY);
+
+                for (let x = 0; x <= width; x += 60) {
+                    const wave = Math.sin(x * 0.0025 + time * 0.00045 + band * 2.1) * 42
+                               + Math.cos(x * 0.004 - time * 0.0003) * 20;
+                    ctx.lineTo(x, baseY + wave);
+                }
+                ctx.lineTo(width, baseY + 170);
+                ctx.lineTo(0, baseY + 170);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // Draw Radiant Glowing 5-Pointed Star Topper
+        function drawTopStar(cx, cy, radius, time, pulse) {
+            const starColor = LIGHT_MODES[currentLightMode].starColor;
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // Soft volumetric outer glow
+            const glowR = radius * (4.2 + Math.sin(time * 0.004) * 0.4 + pulse * 1.1);
+            const halo = ctx.createRadialGradient(0, 0, 1, 0, 0, glowR);
+            halo.addColorStop(0, '#ffffff');
+            halo.addColorStop(0.2, starColor);
+            halo.addColorStop(0.55, 'rgba(251, 191, 36, 0.18)');
+            halo.addColorStop(1, 'rgba(251, 191, 36, 0)');
+
+            ctx.fillStyle = halo;
+            ctx.beginPath();
+            ctx.arc(0, 0, glowR, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Subtle rotating light rays
+            ctx.rotate(Math.sin(time * 0.0012) * 0.15);
+            ctx.fillStyle = '#fffef0';
+            ctx.shadowColor = starColor;
+            ctx.shadowBlur = 18;
+
+            const spikes = 5;
+            const outerR = radius * (1 + pulse * 0.12);
+            const innerR = outerR * 0.44;
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const a = (i * Math.PI) / spikes - Math.PI / 2;
+                const px = Math.cos(a) * r;
+                const py = Math.sin(a) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Main Animation Loop
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            // Update wish countdown progress
+            updateWishTimer(time);
+
+            // Decay music beat pulse smoothly
+            musicEngine.musicPulse *= 0.92;
+            const beatPulse = currentLightMode === 'rhythm'
+                ? Math.max(musicEngine.musicPulse, (Math.sin(time * 0.007) * 0.5 + 0.5) * (musicEngine.isPlaying ? 0.3 : 0.75))
+                : musicEngine.musicPulse * 0.45;
+
+            // Update mini music visualizer
+            drawVisualizer(time);
+
+            // 1. Deep Midnight Sky Background Gradient
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+            skyGrad.addColorStop(0, '#020612');
+            skyGrad.addColorStop(0.45, '#07142b');
+            skyGrad.addColorStop(0.85, '#091f2e');
+            skyGrad.addColorStop(1, '#05121d');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, width, height);
+
+            // 2. Aurora Borealis
+            drawAurora(time);
+
+            // 3. Background Twinkling Stars
+            for (let i = 0; i < starsBg.length; i++) {
+                const s = starsBg[i];
+                const alpha = 0.25 + 0.65 * (Math.sin(time * s.speed + s.phase) * 0.5 + 0.5);
+                ctx.fillStyle = `rgba(226, 232, 240, ${alpha.toFixed(2)})`;
+                ctx.beginPath();
+                ctx.arc(s.x * width, s.y * height, s.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 4. Compute Responsive Tree Dimensions & Center
+            const isMobile = width <= 768;
+            const treeHeight = Math.min(height * (isMobile ? 0.45 : 0.67), 560);
+            const treeBaseRadius = treeHeight * (isMobile ? 0.42 : 0.39);
+            const centerX = width * 0.5;
+            const topY = height * (isMobile ? 0.115 : 0.13);
+            const bottomY = topY + treeHeight;
+
+            // Soft glowing base halo on the ground
+            const groundGrad = ctx.createRadialGradient(centerX, bottomY + 12, 8, centerX, bottomY + 12, treeBaseRadius * 1.25);
+            groundGrad.addColorStop(0, 'rgba(251, 191, 36, 0.22)');
+            groundGrad.addColorStop(0.45, 'rgba(16, 185, 129, 0.10)');
+            groundGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.save();
+            ctx.scale(1, 0.32);
+            ctx.fillStyle = groundGrad;
+            ctx.beginPath();
+            ctx.arc(centerX, (bottomY + 12) / 0.32, treeBaseRadius * 1.25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Gentle auto-rotation around its axis, smoothly returning to base speed after user drag
+            // Only pause auto-rotation when the user is actively dragging horizontally (not on a tap)
+            if (!(isDraggingTree && hasDraggedBeyondTap)) {
+                treeAngle += treeAngularVelocity;
+                treeAngularVelocity += (BASE_SPIN_SPEED - treeAngularVelocity) * 0.05;
+            }
+
+            const renderQueue = [];
+            const modeConfig = LIGHT_MODES[currentLightMode];
+            const focalLength = 760;
+
+            function project(t, r, theta) {
+                const angle = theta + treeAngle;
+                const radius = r * treeBaseRadius;
+                const x3d = Math.cos(angle) * radius;
+                const z3d = Math.sin(angle) * radius;
+                const y3d = topY + t * treeHeight;
+
+                const perspective = focalLength / (focalLength + z3d + 160);
+                return {
+                    x: centerX + x3d * perspective,
+                    y: y3d + z3d * 0.08,
+                    z: z3d,
+                    scale: perspective
+                };
+            }
+
+            // A. Pine Foliage Particles
+            for (let i = 0; i < foliageParticles.length; i++) {
+                const fp = foliageParticles[i];
+                const proj = project(fp.t, fp.r, fp.theta);
+                renderQueue.push({
+                    type: 'foliage',
+                    x: proj.x, y: proj.y, z: proj.z,
+                    size: fp.size * proj.scale,
+                    color: fp.color,
+                    alpha: fp.alpha * (0.5 + 0.5 * proj.scale)
+                });
+            }
+
+            // B. Spiral Glowing Ribbons
+            for (let i = 0; i < ribbonParticles.length; i++) {
+                const rp = ribbonParticles[i];
+                const proj = project(rp.t, rp.r, rp.theta);
+                const shimmer = 0.55 + 0.45 * Math.sin(time * 0.005 + rp.phase);
+                renderQueue.push({
+                    type: 'ribbon',
+                    x: proj.x, y: proj.y, z: proj.z,
+                    size: (2.2 + shimmer * 1.3 + beatPulse * 1.1) * proj.scale,
+                    color: rp.strand === 0 ? modeConfig.ribbonA : modeConfig.ribbonB,
+                    alpha: (0.45 + shimmer * 0.5) * (0.55 + 0.45 * proj.scale)
+                });
+            }
+
+            // C. Twinkling Ornament Lights
+            for (let i = 0; i < ornamentLights.length; i++) {
+                const l = ornamentLights[i];
+                const proj = project(l.t, l.r, l.theta);
+
+                let twinkle = Math.sin(time * l.twinkleSpeed + l.phase) * 0.5 + 0.5;
+                if (currentLightMode === 'rhythm') {
+                    // Dramatic beat-synced flash
+                    twinkle = Math.min(1, twinkle * 0.45 + beatPulse * 0.95);
+                } else {
+                    twinkle = Math.min(1, 0.35 + twinkle * 0.65 + beatPulse * 0.3);
+                }
+
+                // Dynamic color cycling for Neon mode
+                let color = modeConfig.colors[l.colorIdx];
+                if (currentLightMode === 'neon') {
+                    const hue = (time * 0.06 + l.t * 280 + l.colorIdx * 45) % 360;
+                    color = `hsl(${hue}, 95%, 68%)`;
+                }
+
+                renderQueue.push({
+                    type: 'light',
+                    x: proj.x, y: proj.y, z: proj.z,
+                    size: (l.baseSize + twinkle * 1.8) * proj.scale,
+                    color,
+                    twinkle
+                });
+            }
+
+            // Depth sort back-to-front (largest z is farthest)
+            renderQueue.sort((a, b) => b.z - a.z);
+
+            // Render Sorted 3D Tree
+            for (let i = 0; i < renderQueue.length; i++) {
+                const item = renderQueue[i];
+                if (item.type === 'foliage') {
+                    ctx.globalAlpha = item.alpha;
+                    ctx.fillStyle = item.color;
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (item.type === 'ribbon') {
+                    ctx.globalAlpha = item.alpha;
+                    ctx.fillStyle = item.color;
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (item.type === 'light') {
+                    // Bokeh glow halo
+                    ctx.globalAlpha = item.twinkle * 0.35;
+                    ctx.fillStyle = item.color;
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size * 2.8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Bright core
+                    ctx.globalAlpha = Math.min(1, 0.55 + item.twinkle * 0.45);
+                    ctx.fillStyle = item.color;
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Specular hot center
+                    ctx.globalAlpha = item.twinkle * 0.85;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, item.size * 0.42, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1;
+
+            // 5. Radiant Top Star
+            drawTopStar(centerX, topY - 4, isMobile ? 14 : 18, time, beatPulse);
+
+            // 6. Multi-Depth Snowfall
+            if (snowLevel > 0) {
+                const activeCount = snowLevel === 1 ? 95 : snowflakes.length;
+                const speedMult = snowLevel === 1 ? 0.85 : 1.35;
+
+                for (let i = 0; i < activeCount; i++) {
+                    const sf = snowflakes[i];
+                    sf.y += sf.speedY * speedMult;
+                    sf.x += Math.sin(time * 0.001 + sf.phase) * 0.45 + sf.drift;
+
+                    if (sf.y > height + 8) {
+                        sf.y = -8;
+                        sf.x = Math.random() * width;
+                    }
+                    if (sf.x > width + 8) sf.x = -8;
+                    if (sf.x < -8) sf.x = width + 8;
+
+                    ctx.fillStyle = `rgba(241, 245, 249, ${(0.25 + sf.depth * 0.65).toFixed(2)})`;
+                    ctx.beginPath();
+                    ctx.arc(sf.x, sf.y, sf.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // 7. Interactive Click/Tap Fireworks & Stardust
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                const fw = fireworks[i];
+                fw.x += fw.vx;
+                fw.y += fw.vy;
+                fw.vy += 0.045; // Gentle gravity
+                fw.vx *= 0.985;
+                fw.life -= fw.decay;
+
+                if (fw.life <= 0) {
+                    fireworks.splice(i, 1);
+                    continue;
+                }
+
+                ctx.globalAlpha = fw.life;
+                ctx.fillStyle = fw.color;
+                ctx.beginPath();
+                ctx.arc(fw.x, fw.y, fw.size * fw.life + 0.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Sparkle glow
+                ctx.globalAlpha = fw.life * 0.35;
+                ctx.beginPath();
+                ctx.arc(fw.x, fw.y, fw.size * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+
+        /**
+         * ============================================================================
+         * 5. INTERACTIVE UI CONTROLS (Lighting, Snow, Mobile Drawer, Touch Spin)
+         * ============================================================================
+         */
+        const LIGHT_MODE_KEYS = Object.keys(LIGHT_MODES);
+
+        function applyLightMode(mode) {
+            currentLightMode = mode;
+            const modeName = LIGHT_MODES[mode].name;
+            document.getElementById('light-mode-name').textContent = modeName;
+            document.getElementById('mobile-mode-subtitle').textContent = `Đèn: ${modeName}`;
+
+            document.querySelectorAll('.light-mode-btn').forEach(b => {
+                const active = b.dataset.mode === mode;
+                b.classList.toggle('border-amber-400/50', active);
+                b.classList.toggle('bg-amber-400/15', active);
+                b.classList.toggle('border-white/10', !active);
+                b.classList.toggle('bg-white/5', !active);
+                const label = b.querySelector('span:last-child');
+                if (label) {
+                    label.classList.toggle('text-slate-100', active);
+                    label.classList.toggle('text-slate-300', !active);
+                }
+            });
+
+            if (mode === 'rhythm' && !musicEngine.isPlaying) {
+                showToast('Bật nhạc để đèn nhấp nháy theo giai điệu! 🎶');
+            }
+        }
+
+        document.querySelectorAll('.light-mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyLightMode(btn.dataset.mode));
+        });
+
+        // Quick light-mode cycle button on Mobile Mini-Bar
+        document.getElementById('btn-mobile-light').addEventListener('click', () => {
+            const idx = (LIGHT_MODE_KEYS.indexOf(currentLightMode) + 1) % LIGHT_MODE_KEYS.length;
+            const nextMode = LIGHT_MODE_KEYS[idx];
+            applyLightMode(nextMode);
+            showToast(`Chế độ đèn: ${LIGHT_MODES[nextMode].name} ✨`);
+        });
+
+        // Snow density toggle (synced across top header & mobile drawer)
+        function cycleSnowLevel() {
+            snowLevel = (snowLevel + 1) % 3;
+            const label = SNOW_LABELS[snowLevel];
+            document.getElementById('snow-label').textContent = label;
+            document.getElementById('mobile-snow-label').textContent = label;
+            showToast(`Chế độ tuyết: ${label.replace('Tuyết: ', '')} ❄️`);
+        }
+        document.getElementById('btn-snow-toggle').addEventListener('click', cycleSnowLevel);
+        document.getElementById('btn-mobile-snow').addEventListener('click', cycleSnowLevel);
+
+        // Mobile Slide-Up Settings Bottom Sheet Drawer
+        const controlDockEl = document.getElementById('control-dock');
+        const drawerBackdropEl = document.getElementById('drawer-backdrop');
+
+        function openMobileDrawer() {
+            controlDockEl.classList.add('drawer-open');
+            drawerBackdropEl.classList.remove('hidden');
+            requestAnimationFrame(() => drawerBackdropEl.classList.remove('opacity-0'));
+        }
+
+        function closeMobileDrawer() {
+            controlDockEl.classList.remove('drawer-open');
+            drawerBackdropEl.classList.add('opacity-0');
+            setTimeout(() => drawerBackdropEl.classList.add('hidden'), 300);
+        }
+
+        document.getElementById('btn-open-drawer').addEventListener('click', openMobileDrawer);
+        document.getElementById('btn-close-drawer').addEventListener('click', closeMobileDrawer);
+        drawerBackdropEl.addEventListener('click', closeMobileDrawer);
+
+        // Hide / Show Control Panels for Clean Viewing Mode (keeps Tree & Wish visible!)
+        let isUICollapsed = false;
+        document.getElementById('btn-toggle-ui').addEventListener('click', () => {
+            closeMobileDrawer();
+            isUICollapsed = !isUICollapsed;
+            const uiLayers = document.querySelectorAll('.ui-layer');
+            const eyeOpen = document.getElementById('icon-eye-open');
+            const eyeClosed = document.getElementById('icon-eye-closed');
+            const toggleText = document.getElementById('ui-toggle-text');
+
+            uiLayers.forEach(el => {
+                if (isUICollapsed) el.classList.add('ui-hidden');
+                else el.classList.remove('ui-hidden');
+            });
+
+            if (isUICollapsed) {
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+                toggleText.textContent = 'Hiện bảng';
+                showToast('Chế độ ngắm toàn màn hình ✨');
+            } else {
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+                toggleText.textContent = 'Thu gọn';
+            }
+        });
+
+        // Canvas Touch/Mouse Interaction: Tap for Fireworks, Drag Horizontally to Spin 3D Tree
+        canvas.addEventListener('pointerdown', (e) => {
+            isDraggingTree = true;
+            hasDraggedBeyondTap = false;
+            pointerDownX = e.clientX;
+            pointerDownY = e.clientY;
+            lastDragX = e.clientX;
+            canvas.setPointerCapture(e.pointerId);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (!isDraggingTree) return;
+            const totalMove = Math.hypot(e.clientX - pointerDownX, e.clientY - pointerDownY);
+            if (!hasDraggedBeyondTap) {
+                if (totalMove > 8) {
+                    hasDraggedBeyondTap = true;
+                    lastDragX = e.clientX;
+                }
+                return;
+            }
+            const dx = e.clientX - lastDragX;
+            const deltaAngle = dx * 0.0085;
+            treeAngle += deltaAngle;
+            treeAngularVelocity = deltaAngle * 0.85;
+            lastDragX = e.clientX;
+        });
+
+        canvas.addEventListener('pointerup', (e) => {
+            if (isDraggingTree && !hasDraggedBeyondTap) {
+                spawnFirework(e.clientX, e.clientY);
+            }
+            isDraggingTree = false;
+            hasDraggedBeyondTap = false;
+        });
+
+        canvas.addEventListener('pointercancel', () => {
+            isDraggingTree = false;
+            hasDraggedBeyondTap = false;
+        });
+
+        let lastResponsiveBucket = window.innerWidth <= 768;
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            const isNowMobile = window.innerWidth <= 768;
+            if (isNowMobile !== lastResponsiveBucket) {
+                lastResponsiveBucket = isNowMobile;
+                initSceneEntities();
+                if (!isNowMobile) closeMobileDrawer();
+            }
+        });
+
+        // Initialize everything cleanly on window load
+        window.onload = function () {
+            resizeCanvas();
+            initSceneEntities();
+            renderWish(currentWishIndex, false);
+            lastWishTick = performance.now();
+            requestAnimationFrame(animate);
+            // Automatically start playing Christmas music on load
+            musicEngine.play(true);
+        };
+    </script>
+</body>
+</html>
