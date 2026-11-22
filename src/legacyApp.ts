@@ -1244,6 +1244,12 @@ export function initLegacyApp(): void {
         lastWishTick = performance.now();
         requestAnimationFrame(animate);
         musicEngine.play(true);
+        setTimeout(() => {
+            if (!musicEngine.isPlaying) {
+                musicEngine.audioBlocked = true;
+                musicEngine.updateUI();
+            }
+        }, 1500);
 
     
 }
