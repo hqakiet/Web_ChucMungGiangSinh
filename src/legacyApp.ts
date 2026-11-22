@@ -189,10 +189,10 @@ export function initLegacyApp(): void {
          * Các file MP3 được đặt trong thư mục public/music.
          */
         const LOCAL_PLAYLIST = [
-            { title: "We Wish You a Merry Christmas", file: "/music/wewishyouamerrychristmas.mp3" },
-            { title: "Jingle Bells", file: "/music/jinglebells.mp3" },
-            { title: "Last Christmas", file: "/music/lastchristmas.mp3" },
-            { title: "Feliz Navidad", file: "/music/feliznavidad.mp3" }
+            { title: "We Wish You a Merry Christmas", file: "./music/wewishyouamerrychristmas.mp3" },
+            { title: "Jingle Bells", file: "./music/jinglebells.mp3" },
+            { title: "Last Christmas", file: "./music/lastchristmas.mp3" },
+            { title: "Feliz Navidad", file: "./music/feliznavidad.mp3" }
         ];
 
         function formatTrackTime(sec) {
