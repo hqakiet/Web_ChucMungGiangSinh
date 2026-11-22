@@ -225,6 +225,16 @@ export function initLegacyApp(): void {
                     this.nextTrack();
                 });
 
+                this.audioEl.addEventListener('play', () => {
+                    this.isPlaying = true;
+                    this.updateUI();
+                });
+
+                this.audioEl.addEventListener('pause', () => {
+                    this.isPlaying = false;
+                    this.updateUI();
+                });
+
                 this.audioEl.addEventListener('loadedmetadata', () => {
                     this.updateProgressUI();
                 });
@@ -1227,6 +1237,7 @@ export function initLegacyApp(): void {
         renderWish(currentWishIndex, false);
         lastWishTick = performance.now();
         requestAnimationFrame(animate);
+        musicEngine.play(true);
 
     
 }
