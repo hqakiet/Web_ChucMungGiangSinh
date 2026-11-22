@@ -210,6 +210,7 @@ export function initLegacyApp(): void {
                 this.isShuffle = false;
                 this.volume = 0.80;
                 this.musicPulse = 0;
+                this.audioBlocked = false;
 
                 // HTML5 Audio + Web Audio API Analyser (auto-bypassed on file:// to avoid browser CORS mute)
                 this.audioEl = document.getElementById('custom-audio-el');
@@ -227,6 +228,7 @@ export function initLegacyApp(): void {
 
                 this.audioEl.addEventListener('play', () => {
                     this.isPlaying = true;
+                    this.audioBlocked = false;
                     this.updateUI();
                 });
 
@@ -375,12 +377,13 @@ export function initLegacyApp(): void {
                         this.updateUI();
                     }).catch((err) => {
                         this.isPlaying = !this.audioEl.paused;
-                        if (err && err.name === 'NotAllowedError') {
+                        if (err && err.name === 'NotAllowedError' && this.audioEl.paused) {
+                            this.audioBlocked = true;
                             showToast(
                                 'Không phát được nhạc. Hãy bấm ổ khóa/cài đặt trang ở thanh địa chỉ → Âm thanh → Cho phép, sau đó tải lại trang.',
                                 7000
                             );
-                        } else if (!isAutoStart) {
+                        } else if (!isAutoStart && (!err || err.name !== 'NotAllowedError')) {
                             const current = this.playlist[this.currentTrackIndex];
                             showToast(`Kiểm tra file "${current.file}" đã đặt cùng thư mục chưa nhé! 📂`);
                         }
@@ -434,6 +437,8 @@ export function initLegacyApp(): void {
                 const title = track ? track.title : 'Nhạc Giáng Sinh';
                 const sub = this.isPlaying
                     ? `Đang phát • Bài ${this.currentTrackIndex + 1} / ${this.playlist.length}`
+                    : this.audioBlocked
+                        ? 'Bị chặn • Bật Âm thanh trong cài đặt trình duyệt'
                     : `Sẵn sàng • Bài ${this.currentTrackIndex + 1} / ${this.playlist.length}`;
 
                 document.getElementById('track-title').textContent = title;
