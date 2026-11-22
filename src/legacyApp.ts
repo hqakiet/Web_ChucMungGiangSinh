@@ -374,7 +374,7 @@ export function initLegacyApp(): void {
                         if (!isAutoStart) this.initAudioContext();
                         this.updateUI();
                     }).catch((err) => {
-                        this.isPlaying = false;
+                        this.isPlaying = !this.audioEl.paused;
                         if (err && err.name === 'NotAllowedError') {
                             showToast(
                                 'Không phát được nhạc. Hãy bấm ổ khóa/cài đặt trang ở thanh địa chỉ → Âm thanh → Cho phép, sau đó tải lại trang.',
@@ -429,6 +429,7 @@ export function initLegacyApp(): void {
             }
 
             updateUI() {
+                this.isPlaying = !this.audioEl.paused;
                 const track = this.playlist[this.currentTrackIndex];
                 const title = track ? track.title : 'Nhạc Giáng Sinh';
                 const sub = this.isPlaying
