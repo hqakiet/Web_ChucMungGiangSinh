@@ -313,7 +313,7 @@ export function initLegacyApp(): void {
                 const safeIdx = (index + this.playlist.length) % this.playlist.length;
                 this.currentTrackIndex = safeIdx;
                 const track = this.playlist[safeIdx];
-                this.audioEl.src = encodeURI(track.file);
+                this.audioEl.src = `${encodeURI(track.file)}?v=${Date.now()}`;
                 this.audioEl.currentTime = 0;
                 this.audioEl.volume = this.volume;
                 this.audioEl.load();
